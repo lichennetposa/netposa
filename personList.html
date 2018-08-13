@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>人员列表</title>
+    <!-- zui -->
+    <link href="https://cdn.bootcss.com/zui/1.8.1/css/zui.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="shortcut icon" href="http://a.pokerboy.cn/com_vine_iphone_128px_1194570_easyicon.net.ico" type="image/x-icon">
+  </head>
+  <body>
+    <!-- 在此处编码你的创意 -->
+    <header class="bar bar-nav">
+      <a class="button button-link button-nav pull-left back" onclick="goBack()">
+        <span class="icon icon-left"></span>
+        返回
+      </a>
+      <h1 class='title'>人事周报</h1>
+    </header>
+    <div class="container">
+      <ol class="breadcrumb">
+        <li><a href="#" id="old_breadUrl"></a></li>
+        <li class="active" style="font-size: 14px;"><div id="renYuanZhuangTai"></div>人员数量:(<span id="userCount"></span>人)</li>
+      </ol>
+      <div>   
+        <table class="table table-borderless">
+          <tbody id="userList_div">
+            <!-- <tr custom='1' onclick="turnToUserInfo(this)">
+              <td rowspan="2" id="row1">
+                <div id="headPic">
+                  <div id="headText">军航</div>
+                </div>
+              </td>
+              <td id="row2" style="font-size: 13px;"><strong>马军航</strong><br><span id="gangwei">应用研发工程师</span></td>
+              <td rowspan="2" id="row3">
+                <div id="jump"><strong>></strong></div>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+            </tr> -->
+          </tbody>
+        </table>
+      </div>
+      
+
+
+    </div>
+    <!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <!-- ZUI Javascript组件 -->
+    <script src="https://cdn.bootcss.com/zui/1.8.1/js/zui.min.js"></script>
+    <script src="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.js"></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <div style="height: 100px;"></div>
+  </body>
+  <script type="text/javascript">
+    window.onload=function () {
+      // localStorage.setItem("userStatus", 'zaizhi'); //将人员状态加载入本地存储
+      var bumen = localStorage.getItem("gongSiId");
+      $.ajax({
+        url:"api/renshizhoubao/getUserInfoList",
+        type:"get",
+        dataType : "json",
+        data:{
+          level:localStorage.getItem('level'),
+          bumen:bumen,
+          zhuangTai:localStorage.getItem('userStatus')
+        },
+        success:function(data){
+          var userList = data.list;
+          var htmlCode = '';
+          document.getElementById('userCount').innerHTML=userList.length;
+          for(var i=0;i<userList.length;i++){
+            if(i==0){
+              // document.getElementById('old_breadUrl').innerHTML=userList[i].bumen;
+              var renYuanZhuangTai = localStorage.getItem('userStatus');
+              if('zaizhi'==renYuanZhuangTai){
+                renYuanZhuangTai = '在职';
+              }else if('lizhi'==renYuanZhuangTai){
+                renYuanZhuangTai = '离职';
+              }else if('offer'==renYuanZhuangTai){
+                renYuanZhuangTai = 'OFFER';
+              }else if('diaodong'==renYuanZhuangTai){
+                renYuanZhuangTai = '调动';
+              }else if('ruzhi'==renYuanZhuangTai){
+                renYuanZhuangTai = '入职';
+              }
+              document.getElementById('renYuanZhuangTai').innerHTML=renYuanZhuangTai;
+              console.log(123);
+              console.log(renYuanZhuangTai);
+            }
+            if(userList[i].gangwei==undefined){
+              userList[i].gangwei = '';
+            }
+            htmlCode += '<tr custom = '+userList[i].bianhao+' onclick='+'turnToUserInfo(this)'+'><td rowspan="2" id="row1"><div id="headPic"><div id="headText">'+userList[i].name.substr(userList[i].name.length-2,2)+'</div></div></td>';
+            htmlCode += '<td id="row2" style="font-size: 13px;"><strong>'+userList[i].name+'</strong><br><span id="gangwei">'+userList[i].gangwei+'</span></td><td rowspan="2" id="row3">';
+            htmlCode += '<div id="jump"><strong>></strong></div></td></tr><tr><td></td></tr>';
+            console.log('人员：',userList[i]);  
+          }
+          document.getElementById('userList_div').innerHTML=htmlCode;
+        },
+        error:function(data){
+          alert('服务器异常!');
+        }
+      });
+    };
+
+    function turnToUserInfo(e){
+      //得到html
+      // console.log(e);
+      //得到对象
+      // console.log($(e));
+      //得到自定义的custom
+      console.log($(e).attr("custom"));
+      localStorage.setItem("userCode", $(e).attr("custom")); //将人员状态加载入本地存储
+      window.location.href = '/userInfo.html';
+    }
+
+    function goBack() {
+      window.history.go(-1);
+    }
+  </script>
+  <style type="text/css">
+    body {
+      height: 100%;
+      width: 100%;
+    }
+    .container {
+      height: 100%;
+      width: 100%;
+    }
+    table {
+      height: 100%;
+      width: 100%;
+    }
+    #row1 {
+      width: 12%;
+    }
+    #row2 {
+      width: 73%;
+    }
+    #row3 {
+      width: 15%;
+    }
+    #old_breadUrl {
+      color: #FF9404;
+      font-size: 14px;
+    }
+    #gangwei {
+      color: #A1A1A1;
+    }
+    #headPic {
+      height: 40px;
+      width: 40px;
+      border-radius:50%;
+      background-color: #5799FF;
+      color: white;
+      margin-left: 3%;
+      padding-left: 18%;
+      font-size: 13px;
+    }
+    #headText {
+      padding-top: 30%;
+    }
+    #jump {
+      padding-top: 15%;
+      color: #B8B8B8;
+      font-size: 20px;
+    }
+  </style>
+</html>

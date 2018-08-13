@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>入职人员信息</title>
+    <!-- zui -->
+    <link href="https://cdn.bootcss.com/zui/1.8.1/css/zui.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="shortcut icon" href="http://a.pokerboy.cn/com_vine_iphone_128px_1194570_easyicon.net.ico" type="image/x-icon">
+  </head>
+  <body>
+    <!-- 在此处编码你的创意 -->
+
+    <div class="container">
+      <ol class="breadcrumb">
+        <li><a href="your/url/" id="old_breadUrl">资本运营体系</a></li>
+        <li><a href="your/url/" id="old_breadUrl">证券法务部</a></li>
+        <li class="active" style="font-size: 14px;">入职人员信息</li>
+      </ol>
+      <div class="card">
+        <table class="table table-borderless" id="table_neirong">
+        <!-- <table class="table table-bordered"> -->
+          <tbody>
+            <tr id="table_tr1">
+              <td rowspan="3" id="table_row1">
+                <div id="head_back_div">
+                  <!-- 军航 -->
+                </div>
+              </td>
+              <td id="table_row2"></td>
+              <td rowspan="2" id="table_row3">
+                <div id="sex_back_div">
+                  <i class="fa fa-mars-stroke" id="sex"></i>
+                </div>
+              </td>
+            </tr>
+            <tr id="table_tr2">
+              <td style="color: #262626;">
+                <h3 id="card_userName">
+                  <!-- 马军航 -->
+                </h3>
+              </td>
+            </tr>
+            <tr id="table_tr3">
+              <td colspan="2" style="color: #898989; font-size: 15px;" id="card_gangwei">
+                <!-- 应用研发工程师 -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!--列表信息-->
+      <ul style="list-style: none;" id="userInfoList">
+        <!-- <li id="li_title" id="user_name_title">姓名</li>
+        <li id="li_content" id="user_name_content"><h5>马军航</h5></li>
+
+        <li id="li_title" id="user_sex_title">性别</li>
+        <li id="li_content" id="user_sex_content"><h5>男</h5></li> -->
+      </ul>
+    </div>
+    <!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.js"></script>
+    <!-- ZUI Javascript组件 -->
+    <script src="https://cdn.bootcss.com/zui/1.8.1/js/zui.min.js"></script>
+    <script type="text/javascript">
+      window.onload=function () {
+        var userCode = localStorage.getItem('userCode');
+        var userStatus = localStorage.getItem('userStatus');
+        $.ajax({
+          url:"api/renshizhoubao/getUserInfoByBianHao",
+          type:"get",
+          dataType : "json",
+          data:{
+            bianhao:userCode, //NP02192
+            zhuangTai:userStatus
+          },
+          success:function(data){
+            var user = data.userInfo;
+            fuZhi(user);
+          },
+          error:function(data){
+            alert('服务器异常!');
+          }
+        });
+      };
+      function fuZhi(user) {
+        var htmlCode = '';
+        if(ifNull(user.name)){ //姓名
+          document.getElementById('head_back_div').innerHTML=user.name.substr(user.name.length-2,2); //设置头像文本
+          document.getElementById('card_userName').innerHTML=user.name; //设置card姓名
+          htmlCode += '<li id="li_title">姓名</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.name+'</h5></li>';
+        }
+        if(ifNull(user.gangwei)){ //岗位
+          document.getElementById('card_gangwei').innerHTML=user.gangwei; //设置card岗位
+          htmlCode += '<li id="li_title">岗位</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.gangwei+'</h5></li>';
+        }
+        if(ifNull(user.bianhao)){ //编号
+          htmlCode += '<li id="li_title">编号</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.bianhao+'</h5></li>';
+        }
+        if(ifNull(user.xingBie)){ //性别
+          if('女'==user.xingBie){
+            document.getElementById('sex_back_div').innerHTML='<i class="fa fa-venus" id="sex"></i>'; //设置card性别符号
+            document.getElementById('sex_back_div').style.backgroundColor = "#f0648c";
+          }
+          htmlCode += '<li id="li_title">性别</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.xingBie+'</h5></li>';
+        }
+        if(ifNull(user.bumen)){ //部门
+          htmlCode += '<li id="li_title">部门</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.bumen+'</h5></li>';
+        }
+        if(ifNull(user.zhiWuJiBie)){ //职务级别
+          htmlCode += '<li id="li_title">职务级别</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.zhiWuJiBie+'</h5></li>';
+        }
+        if(ifNull(user.gongZuoDi)){ //工作地
+          htmlCode += '<li id="li_title">工作地</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.gongZuoDi+'</h5></li>';
+        }
+        if(ifNull(user.ruZhiRiQi)){ //入职日期
+          htmlCode += '<li id="li_title">入职日期</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.ruZhiRiQi+'</h5></li>';
+        }
+        if(ifNull(user.yinDaoRen)){ //引导人
+          htmlCode += '<li id="li_title">引导人</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.yinDaoRen+'</h5></li>';
+        }
+        if(ifNull(user.youXiang)){ //邮箱
+          htmlCode += '<li id="li_title">邮箱</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.youXiang+'</h5></li>';
+        }
+        if(ifNull(user.zhuanZhengRiQi)){ //转正日期
+          htmlCode += '<li id="li_title">转正日期</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.zhuanZhengRiQi+'</h5></li>';
+        }
+        if(ifNull(user.offerRiQi)){ //OFFER日期
+          htmlCode += '<li id="li_title">OFFER日期</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.offerRiQi+'</h5></li>';
+        }
+        if(ifNull(user.daiRuZhiRiQi)){ //待入职日期
+          htmlCode += '<li id="li_title">待入职日期</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.daiRuZhiRiQi+'</h5></li>';
+        }
+        if(ifNull(user.zhaoPinQuDao)){ //招聘渠道
+          htmlCode += '<li id="li_title">招聘渠道</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.zhaoPinQuDao+'</h5></li>';
+        }
+        if(ifNull(user.zhaoPinZeRenRen)){ //招聘责任人
+          htmlCode += '<li id="li_title">招聘责任人</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.zhaoPinZeRenRen+'</h5></li>';
+        }
+        if(ifNull(user.siLing)){ //司龄
+          htmlCode += '<li id="li_title">司龄</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.siLing+'</h5></li>';
+        }
+        if(ifNull(user.daiRuZhiRiQi)){ //待入职日期
+          htmlCode += '<li id="li_title">待入职日期</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.daiRuZhiRiQi+'</h5></li>';
+        }
+        if(ifNull(user.liZhiRiQi)){ //离职日期
+          htmlCode += '<li id="li_title">离职日期</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.liZhiRiQi+'</h5></li>';
+        }
+        if(ifNull(user.liZhiYuanYin)){ //离职原因
+          htmlCode += '<li id="li_title">离职原因</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.liZhiYuanYin+'</h5></li>';
+        }
+        if(ifNull(user.zhuangTai)){ //员工状态
+          htmlCode += '<li id="li_title">员工状态</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.zhuangTai+'</h5></li>';
+        }
+        if(ifNull(user.chuShengRiQi)){ //出生日期
+          htmlCode += '<li id="li_title">出生日期</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.chuShengRiQi+'</h5></li>';
+        }
+        if(ifNull(user.buMenZhuGuan)){ //部门主管
+          htmlCode += '<li id="li_title">部门主管</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.buMenZhuGuan+'</h5></li>';
+        }
+        if(ifNull(user.xueLi)){ //学历
+          htmlCode += '<li id="li_title">学历</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.xueLi+'</h5></li>';
+        }
+        if(ifNull(user.diaoDongShiJian)){ //调动时间
+          htmlCode += '<li id="li_title">调动时间</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.diaoDongShiJian+'</h5></li>';
+        }
+        if(ifNull(user.diaoDongBuMen)){ //调动部门
+          htmlCode += '<li id="li_title">调动部门</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.diaoDongBuMen+'</h5></li>';
+        }
+        if(ifNull(user.diaoDongGangWei)){ //调动岗位
+          htmlCode += '<li id="li_title">调动岗位</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.diaoDongGangWei+'</h5></li>';
+        }
+        if(ifNull(user.diaoDongGongZuoDi)){ //调动工作地
+          htmlCode += '<li id="li_title">调动工作地</li>';
+          htmlCode += '<li id="li_content"><h5>'+user.diaoDongGongZuoDi+'</h5></li>';
+        }
+        htmlCode += '<div style="height: 50px;"></div>';
+        document.getElementById('userInfoList').innerHTML=htmlCode;
+      }
+      function ifNull(param){
+        if(null == param || '' == param){
+          return false;
+        }else{
+          return true;
+        }
+      }
+
+      function goBack() {
+        window.history.go(-1);
+      }
+    </script>
+    <div style="height: 100px;"></div>
+  </body>
+  <style type="text/css">
+    body {
+      height: 100%;
+      width: 100%;
+    }
+    .container {
+      height: 100%;
+      width: 100%;
+    }
+    .card {
+      margin-top: 3%;
+      border-radius:25px;
+      height: 28%;
+      width: 100%;
+    }
+    #table_biaoti {
+      height: 38px;
+      text-align: center;
+      background-color: lightseagreen;
+    }
+    #biaoti {
+      font-size: 20px;
+      color: white;
+    }
+    #fanhui {
+      font-size: 20px;
+      color: white;
+    }
+    #table_neirong {
+      height: 90%;
+      margin-top: 3%;
+    }
+    #old_breadUrl {
+      color: #FF9404;
+      font-size: 14px;
+    }
+    #table_row1 {
+      width: 30%;
+    }
+    #table_row2 {
+      width: 19%;
+    }
+    #table_row3 {
+      width: 51%;
+    }
+    #table_tr1 {
+      height: 20%;
+    }
+    #table_tr2 {
+      height: 2%;
+    }
+    #sex_back_div {
+      height: 28%;
+      width: 10%;
+      background-color: #3FA2FF;
+      border-radius:50%;
+      margin-top: 14%;
+    }
+    #head_back_div {
+      height: 90%;
+      width: 90%;
+      background-color: #3FA2FF;
+      border-radius:50%;
+      margin-top: 21%;
+      padding-top: 30%;
+      font-size: 25px;
+      padding-left: 20%;
+      color: white;
+    }
+    #sex {
+      margin-left: 22%;
+      color: white;
+    }
+    #li_title {
+      color: #BDBDBD;
+      margin-top: 2%;
+      margin-bottom: 1%;
+    }
+    #li_content {
+      color: #262626;
+      margin-bottom: 1%;
+    }
+  </style>
+</html>

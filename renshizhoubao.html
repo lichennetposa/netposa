@@ -1,0 +1,423 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>人事周报</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="css/swiper.min.css">
+    <link rel="stylesheet" href="css/sm.min.css">
+    <link rel="stylesheet" href="css/sm-extend.min.css">
+    <link rel="stylesheet" href="css/renshizhoubao.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div class="page" style="background: #ffffff" id="test">
+            <div class="content">
+                <div class="content-block">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper" id="lunbo">
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                    <div class="zongshu">
+                        <div class="shu" style="margin-left: 0.5rem">
+                            <div class="shuliang" style="background-image: url(img/ruzhi.png);background-size: cover;" onclick="toGongSiUserList('ruzhi')">
+                                <span style="line-height: 3rem;color: RGBA(255, 255, 255, 1);font-size: 14pt;"  id="ruzhi">0</span>
+                            </div>
+                            <span style="float: left;font-size: 0.7rem;color: RGBA(155, 187, 89, 1);margin-left: 1rem;font-family: PingFangSC;">入职</span>
+                        </div>
+                        <div class="shu">
+                            <div class="shuliang" style="background-image: url(img/lizhi.png);background-size: cover;"  onclick="toGongSiUserList('lizhi')">
+                                <span style="line-height: 3rem;color: RGBA(255, 255, 255, 1);font-size: 14pt;" id="lizhi">0</span>
+                            </div>
+                            <span style="float: left;font-size: 0.7rem;color: RGBA(122, 158, 190, 1);margin-left: 1rem;font-family: PingFangSC;">离职</span>
+                        </div>
+                        <div class="shu">
+                            <div class="shuliang" style="background-image: url(img/offer.png);background-size: cover;"  onclick="toGongSiUserList('offer')">
+                                <span style="line-height: 3rem;color: RGBA(255, 255, 255, 1);font-size: 14pt;" id="offer">0</span>
+                            </div>
+                            <span style="float: left;font-size: 0.7rem;color: RGBA(35, 157, 201, 1);margin-left: 1rem;font-family: PingFangSC;">offer</span>
+                        </div>
+                        <div class="shu">
+                            <div class="shuliang" style="background-image: url(img/diaodong.png);background-size: cover;"  onclick="toGongSiUserList('diaodong')">
+                                <span style="line-height: 3rem;color: RGBA(255, 255, 255, 1);font-size: 14pt;" id="diaodong">0</span>
+                            </div>
+                            <span style="float: left;font-size: 0.7rem;color: RGBA(54, 177, 253, 1);margin-left: 1rem;font-family: PingFangSC;">调动</span>
+                        </div>
+                        <div class="shu">
+                            <div class="shuliang" style="background-image: url(img/zaizhi.png);background-size: cover;"  onclick="toGongSiUserList('zaizhi')">
+                                <span style="line-height: 3rem;color: RGBA(255, 255, 255, 1);font-size: 14pt;" id="zaizhi">0</span>
+                            </div>
+                            <span style="float: left;font-size: 0.7rem;color: RGBA(255, 147, 0, 1);margin-left: 1rem;font-family: PingFangSC;">在职</span>
+                        </div>
+                    </div>
+                    <div class="gongsi" id="gongsi">
+                        <span style="font-size:0.7rem;font-family:PingFangSC-Regular;line-height:1.05rem;" onclick="">东方网力科技股份有限公司</span>
+                    </div>
+                    <div id="ziZuZhi"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/MUI.min.js"></script>
+    <script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://g.alicdn.com/dingding/open-develop/1.6.9/dingtalk.js"></script>
+    <script src="js/swiper.min.js"></script>
+    <script>
+        var zuZhiXinXi = {};
+        var userId = '';
+        var gongsi = false;
+        var gongsiId = '';
+        var gongSiName = '';
+        var level = '';
+        var ruZhiCount = 0;
+        var liZhiCount = 0;
+        var offerCount = 0;
+        var diaoDongCount = 0;
+        var zaiZhiCount = 0;
+		var lunboindex;
+        mui.init();
+        window.onload = function () {
+            var jobCode = localStorage.getItem("jobNumber");
+			lunboindex = localStorage.getItem("lunbo");
+            //alert(jobCode);
+            if(jobCode == "" || jobCode == null || jobCode == undefined){ // "",null,undefined
+                //console.log("为空");
+                dd.ready(function() {
+                    dd.runtime.permission.requestAuthCode({
+                        corpId: "dingf450a0661a5a3f6335c2f4657eb6378f",
+                        onSuccess: function(result) {
+                            button17(result.code);
+                    codeStr = result.code;
+                        },
+                        onFail : function(err) {
+                            alert(err.errorMessage);
+                            document.getElementById('can').innerText=err;
+                        }
+                    
+                    });
+                });
+            }else{
+                getUserByBianHao(jobCode);
+            }
+            
+        }
+        function button17(aa){
+            var codeStr = aa;
+            //alert('codeStr'+aa);
+            $.ajax({
+					async: false,
+                    url:"dingding/NTP/test/getdindex.do",
+                    type:"get",
+                    dataType : "json",
+                    data:{
+                    code:codeStr
+                    },
+                    success:function(data){
+                    var aa = JSON.parse(data.result);
+                    if(200 == aa.status){
+                        getUserByBianHao(aa.jobNumber); 
+                    }
+                    },
+                    error:function(data){
+                        document.getElementById('inHere').innerText=aa.result;
+                    }
+            });
+        }
+        getUserByBianHao = function(bianhao){
+            $.ajax({
+                async: false,
+                url:'api/user/getUserInfoByBianHao',
+                type:'post',
+                data:{bianhao:bianhao},
+                dataType:'json',
+                success:function(result){
+					
+                    if(result.result=='success'){
+                        userId = result.userInfo.id;
+						getZuZhiXinXi();
+                    }
+                }
+
+            })
+        }
+        getZuZhiXinXi = function(){
+            if(lunboindex==null||lunboindex==0){
+                lunboindex = 2;
+            }
+            $.ajax({
+                async: false,
+                url:'api/renshizhoubao/getZuZhiXinXiByUserId',
+                type:'post',
+                data:{userId:userId},
+                dataType:'json',
+                success:function(result){
+                    if(result.result){
+                        html = '';
+                        var l = 1;
+                        var img = '';
+                        $.each(result.list,function(i,item){
+                            var id = item.id;
+                            console.log(item);
+                            zuZhiXinXi[id] = item;
+                            
+                            if(item.name=='上海网力视界智能科技有限公司'){
+                                img = 'img/lunbo3.png';
+                            }else if(item.name=='东方网力(苏州)智能科技有限公司'){
+                                img = 'img/lunbo2.png';
+                            }else if(item.name=='东方网力科技股份有限公司'){
+                                img = 'img/lunbo1.png';
+                            }else{
+                                l++;
+                                img = 'img/lb0'+l+'.png';
+                            }
+                            if(item.level!=0&&item.level!=-2){
+                                item.name = item.name + '('+item.gsjc+')';
+                            }
+                            html+='<div class="swiper-slide" onclick="getFuZuZhiXinXi(\''+userId+'\',\''+item.id+'\',\''+item.name+'\')" style="background-image: url('+img+');background-size: cover;color: white;" id='+item.id+'>'+item.name+'</div>';
+                        })
+                        console.log(zuZhiXinXi);
+                        $("#lunbo").html(html);
+                    }
+                },
+                complete:function(){
+                    var swiper = new Swiper({
+                        el: '.swiper-container',
+                        initialSlide: lunboindex-1,
+                        spaceBetween: 2,
+                        slidesPerView: 1.5,
+                        centeredSlides: true,
+                        slideToClickedSlide: true,
+                        grabCursor: true,
+                        loop: true,
+                        scrollbar: {
+                            el: '.swiper-scrollbar',
+                        },
+                        mousewheel: {
+                            enabled: true,
+                        },
+                        keyboard: {
+                            enabled: true,
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                        },
+                        on: {
+                            slideChangeTransitionEnd: function () {
+                                localStorage.setItem("lunbo", this.activeIndex);
+                                console.log($('.swiper-slide')[this.activeIndex].id); //切换结束时，告诉我现在是第几个slide
+                                $("#zaizhi").html(zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].zaiZhiCount);
+                                $("#lizhi").html(zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].liZhiCount);
+                                $("#ruzhi").html(zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].ruZhiCount);
+                                $("#offer").html(zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].offerCount);
+                                $("#diaodong").html(zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].diaoDongCount);
+                                ruZhiCount = zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].ruZhiCount;
+                                liZhiCount = zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].liZhiCount;
+                                offerCount = zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].offerCount;
+                                diaoDongCount = zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].diaoDongCount;
+                                zaiZhiCount = zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].zaiZhiCount;
+                                $("#gongsi").html('<span style="font-size:0.7rem;font-family:PingFangSC-Regular;line-height:1.05rem;" id="zizuzhimingcheng" onclick="">'+zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].name+'</span>');
+                                getZiZuZhiXinXi(userId,$('.swiper-slide')[this.activeIndex].id)
+                                gongsi = true;
+                                gongSiName = zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].name;
+                                gongsiId = $('.swiper-slide')[this.activeIndex].id;
+                                level = zuZhiXinXi[$('.swiper-slide')[this.activeIndex].id].level;
+
+                            },
+                        },
+                    });
+                }
+
+            })
+        }
+        getFuZuZhiXinXi = function(userId,gongSiId,gongSiName){
+            $("#gongsi").html('<span style="font-size:0.7rem;font-family:PingFangSC-Regular;line-height:1.05rem;" id="zizuzhimingcheng" onclick="">'+gongSiName+'</span>');
+            getZiZuZhiXinXi(userId,gongSiId)
+            gongsi = true;
+        }
+
+        getZiZuZhiXinXi = function(userId,gongSiId){
+            if(zuZhiXinXi[gongSiId+'zi']!=undefined){
+                eachZuZhi(zuZhiXinXi[gongSiId+'zi'])
+            }else{
+                $.ajax({
+                    async: false,
+                    url:'api/renshizhoubao/getZiZuZhiXinXiByUserIdAndGongSi',
+                    type:'post',
+                    data:{userId:userId,gongSiId:gongSiId},
+                    dataType:'json',
+                    success:function(result){
+                        if(result.result){
+                            zuZhiXinXi[gongSiId+'zi'] = result.list;
+                            eachZuZhi(result.list);
+                        }
+                    }
+
+                })
+            }
+        }
+        toZiZuZhi = function(userId,gongSiId,gongSiName){
+            html = '';
+            if(gongsi){
+                $("#gongsi").html("");
+                gongsi = false;
+                html = '<span style="font-size:0.7rem;font-family:PingFangSC-Regular;line-height:1.05rem;" id="zizuzhimingcheng" onclick="toFuZuZhi(this,\''+userId+'\',\''+gongSiId+'\',\''+gongSiName+'\')">'+gongSiName+'</span>';
+            }else{
+                html = '<span style="font-size:0.7rem;font-family:PingFangSC-Regular;line-height:1.05rem;" id="zizuzhimingcheng" onclick="toFuZuZhi(this,\''+userId+'\',\''+gongSiId+'\',\''+gongSiName+'\')"><img width="10px" height="10px" src="img/jiantou.png">'+gongSiName+'</span>';
+            }
+            $("#gongsi").append(html);
+            getZiZuZhiXinXi(userId,gongSiId);
+        }
+
+        toFuZuZhi = function(_this,userId,gongSiId,gongSiName){
+            console.log()
+            var isdelete = false;
+            l = 0;
+            $.each(document.getElementById('gongsi').getElementsByTagName('span'),function(i,sp){
+                if(l!=0){
+                    document.getElementById('gongsi').getElementsByTagName('span')[l].remove();
+                }
+                if(isdelete){
+                    l = i;
+                    isdelete = false;
+                    $(sp).remove();
+                }
+                if(sp==_this){
+                    isdelete = true;
+                }
+            })
+            getZiZuZhiXinXi(userId,gongSiId);
+        }
+        eachZuZhi = function(list){
+            html = '';
+            $.each(list,function(i,item){
+                if(item.ruZhiCount+item.liZhiCount+item.offerCount+item.diaoDongCount+item.zaiZhiCount>0){
+                    rizhi = '';
+                    lizhi = '';
+                    offer = '';
+                    diaodong = '';
+                    zaizhi = '';
+                    jiantou = '';
+                    if(item.ruZhiCount!=0){
+                        rizhi = 'color:RGBA(255, 148, 4, 1)';
+                    }
+                    if(item.liZhiCount!=0){
+                        lizhi = 'color:RGBA(255, 148, 4, 1)';
+                    }
+                    if(item.offerCount!=0){
+                        offer = 'color:RGBA(255, 148, 4, 1)';
+                    }
+                    if(item.diaoDongCount!=0){
+                        diaodong = 'color:RGBA(255, 148, 4, 1)';
+                    }
+                    if(item.zaiZhiCount!=0){
+                        zaizhi = 'color:RGBA(255, 148, 4, 1)';
+                    }
+                    if(item.sonCount>0){
+                        jiantou = '<div class="tixi" style="width: 15px;">'+
+                                    '<span style="float: left;width: 100%;line-height: 50px;font-size: 25px;color: #ccc1c1;" onclick="toZiZuZhi(\''+userId+'\',\''+item.id+'\',\''+item.name+'\')">'+
+                                        '<img width="11px" height="18px" src="img/jiantou.png">'+
+                                    '</span>'+
+                                '</div>';
+                    }
+                    html+='<div style="margin: auto;height: 5.8rem;background-image: url(img/tixi.png);background-size: cover;margin-top: 1rem;width: 18.4rem;">'+
+                                '<div style="margin-left:1.5rem ;height: 1rem;padding-top: 0.5rem">'+
+                                    '<span style="color: rgba(81,81,81,1);font-family:PingFangSC-Regular;font-size:0.7rem;line-height:1rem;">'+item.name+'</span>'+
+                                '</div>'+
+                                '<div class="tixi" style="margin-left: 1.5rem" onclick="toBuMenUserList(\'ruzhi\',\''+item.id+'\',\''+item.level+'\',\''+item.ruZhiCount+'\',\''+item.name+'\')">'+
+                                    '<span style="float: left;width: 100%;'+rizhi+'">'+item.ruZhiCount+'</span>'+
+                                    '<div class="hengxian" style="border-'+rizhi+'"></div>'+
+                                    '<span style="float: left;width: 100%;font-size: 10px;">入职</span>'+
+                                '</div>'+
+                                '<div class="tixi" onclick="toBuMenUserList(\'lizhi\',\''+item.id+'\',\''+item.level+'\',\''+item.liZhiCount+'\',\''+item.name+'\')">'+
+                                    '<span style="float: left;width: 100%;'+lizhi+'">'+item.liZhiCount+'</span>'+
+                                    '<div class="hengxian" style="border-'+lizhi+'"></div>'+
+                                    '<span style="float: left;width: 100%;font-size: 10px;">离职</span>'+
+                                '</div>'+
+                                '<div class="tixi" onclick="toBuMenUserList(\'offer\',\''+item.id+'\',\''+item.level+'\',\''+item.offerCount+'\',\''+item.name+'\')">'+
+                                    '<span style="float: left;width: 100%;'+offer+'">'+item.offerCount+'</span>'+
+                                    '<div class="hengxian" style="border-'+offer+'"></div>'+
+                                    '<span style="float: left;width: 100%;font-size: 10px;">offer</span>'+
+                                '</div>'+
+                                '<div class="tixi" onclick="toBuMenUserList(\'diaodong\',\''+item.id+'\',\''+item.level+'\',\''+item.diaoDongCount+'\',\''+item.name+'\')">'+
+                                    '<span style="float: left;width: 100%;'+diaodong+'">'+item.diaoDongCount+'</span>'+
+                                    '<div class="hengxian" style="border-'+diaodong+'"></div>'+
+                                    '<span style="float: left;width: 100%;font-size: 10px;">调动</span>'+
+                                '</div>'+
+                                '<div class="tixi" onclick="toBuMenUserList(\'zaizhi\',\''+item.id+'\',\''+item.level+'\',\''+item.zaiZhiCount+'\',\''+item.name+'\')">'+
+                                    '<span style="float: left;width: 100%;'+zaizhi+'">'+item.zaiZhiCount+'</span>'+
+                                    '<div class="hengxian" style="border-'+zaizhi+'"></div>'+
+                                    '<span style="float: left;width: 100%;font-size: 10px;">在职</span>'+
+                                '</div>'+jiantou+
+                            '</div>';
+                }
+            })
+            $("#ziZuZhi").html(html);
+        }
+        //跳转公司员工列表
+        toGongSiUserList = function(zhuangTai){
+            if(zhuangTai == 'ruzhi'){
+                if(ruZhiCount == 0){
+                    return;
+                }
+            }
+            if(zhuangTai == 'lizhi'){
+                if(liZhiCount == 0){
+                    return;
+                }
+            }
+            if(zhuangTai == 'offer'){
+                if(offerCount == 0){
+                    return;
+                }
+            }
+            if(zhuangTai == 'diaodong'){
+                if(diaoDongCount == 0){
+                    return;
+                }
+            }
+            if(zhuangTai == 'zaizhi'){
+                if(zaiZhiCount == 0){
+                    return;
+                }
+            }
+            localStorage.setItem("userStatus", zhuangTai); 
+            localStorage.setItem("gongSiId",gongsiId);
+            localStorage.setItem("level",level);
+            localStorage.setItem("gongSiName",gongSiName);
+            window.location.href = '/personList.html';
+        }
+        //跳转部门员工列表
+        toBuMenUserList = function(zhuangTai,gongsiId,level,count,gongSiName){
+            var mingcheng='';
+            if(count==0){
+                return;
+            }
+            if(gongsi){
+                mingcheng = gongSiName;
+            }else{
+                $.each(document.getElementById('gongsi').getElementsByTagName('span'),function(i,item){
+                    mingcheng += item.innerText+',';
+                })
+                mingcheng += gongSiName;
+            }
+            localStorage.setItem("userStatus", zhuangTai); 
+            localStorage.setItem("gongSiId", gongsiId); 
+            localStorage.setItem("level", level); 
+            localStorage.setItem("gongSiName",mingcheng);
+            window.location.href = '/personList.html';
+        }
+    </script>
+</body>
+
+</html>
